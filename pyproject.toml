@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm[toml]"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+local_scheme = "dirty-tag"
+
+[project]
+name = "pygrype"
+authors = [
+    {name = "Albert Simon", email = "simon.albert75@gmail.com"}
+]
+description = "Python wrapper for Grype"
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = ["anchore", "grype", "security"]
+dynamic = ["version"]
