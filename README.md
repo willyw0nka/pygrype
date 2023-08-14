@@ -1,6 +1,11 @@
 # PyGrype
 A python wrapper for Grype
 
+![PyPI](https://img.shields.io/pypi/v/pygrype)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pygrype)
+![PyPI - License](https://img.shields.io/pypi/l/pygrype)
+
+
 ## Status
 Supported commands
 
