@@ -12,7 +12,7 @@ authors = [
     {name = "Albert Simon", email = "simon.albert75@gmail.com"}
 ]
 description = "Python wrapper for Grype"
-license = { file = "LICENSE" }
+license = { text = "MIT License" }
 readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
