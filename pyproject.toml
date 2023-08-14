@@ -13,6 +13,6 @@ authors = [
 ]
 description = "Python wrapper for Grype"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.5"
 keywords = ["anchore", "grype", "security"]
 dynamic = ["version"]

@@ -14,6 +14,7 @@ Supported commands
     - [ ] status
     - [x] update
 - [ ] ~~help~~
+- [x] scan
 - [x] version
 
 ## Installation
