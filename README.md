@@ -44,7 +44,7 @@ from pygrype.grype import Grype
 grype = Grype(path='/opt/grype')
 ```
 
-
+## Full example
 ```python3
 from pygrype.grype import Grype
 
