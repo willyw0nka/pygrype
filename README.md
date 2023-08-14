@@ -22,14 +22,29 @@ Supported commands
 - [x] scan
 - [x] version
 
-## Installation
-install using `pip`
+## Getting started
+### Prerequisites
+PyGrype relies on an existing grype binary. [Install grype following the official instructions](https://github.com/anchore/grype#installation).
 
+### Installation
+install using `pip`
 ```bash
 pip install pygrype
 ```
 
 ## Usage
+Instantiate `Grype` using the default path
+```python3
+from pygrype.grype import Grype
+grype = Grype()
+```
+or specify the binary
+```python3
+from pygrype.grype import Grype
+grype = Grype(path='/opt/grype')
+```
+
+
 ```python3
 from pygrype.grype import Grype
 
