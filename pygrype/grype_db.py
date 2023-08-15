@@ -1,4 +1,8 @@
+import json
 import subprocess
+from typing import List
+
+from pygrype.core.list.db_meta_data import DBMetaData
 
 class _GrypeDB:
     path: str
@@ -34,9 +38,21 @@ class _GrypeDB:
     #     """Import the Grype database."""
     #     raise NotImplementedError
 
-    # def list(self) -> None:
-    #     """List all available Grype databases."""
-    #     raise NotImplementedError
+    def list(self) -> List[DBMetaData]:
+        """List all available Grype databases."""
+        process = subprocess.run(
+            args=[self.path, 'db', 'list', '-o', 'json'],
+            capture_output=True
+        )
+        data = json.loads(process.stdout)
+        databases = [
+            DBMetaData(
+                built=db['built'],
+                version=db['version'],
+                url=db['url'],
+                checksum=db['checksum']) for db in data]
+
+        return databases
 
     # def status(self) -> None:
     #     """Show the status of the Grype database."""
