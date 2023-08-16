@@ -7,8 +7,9 @@ from typing import List
 from dacite import from_dict
 
 from pygrype.core.grype_version import GrypeVersion
-from pygrype.grype_db import _GrypeDB
 from pygrype.core.scan.scan import Scan
+from pygrype.grype_db import _GrypeDB
+
 
 class Grype:
     """A class representing the Grype vulnerability scanner."""
@@ -21,7 +22,7 @@ class Grype:
 
         Args:
             path (str, optional): The path to the Grype executable. Defaults to 'grype'.
-        
+
         Raises:
             Exception: If Grype is not found at the specified path.
         """
@@ -41,7 +42,7 @@ class Grype:
         """
         process = subprocess.run(
             args=[self.path, 'version', '--output', 'json'],
-            capture_output=True)        
+            capture_output=True)
         data = json.loads(process.stdout)
         grype_version = GrypeVersion(
             version=data['version'],
@@ -57,14 +58,14 @@ class Grype:
         )
         return grype_version
 
-    def scan(self, target: str, add_cpes_if_none: bool = False, by_cve: bool = False, config: str = None, distro: str = None, exclude: List[str] = None,
-             fail_on: str = None, file: str = None, name: str = None, only_fixed: bool = False, only_notfixed: bool = False, platform: str = None,
-             scope: str = None, show_supressed: bool = False) -> Scan:
+    def scan(self, target: str, add_cpes_if_none: bool = False, by_cve: bool = False, config: str = None, distro: str = None,
+             exclude: List[str] = None, fail_on: str = None, file: str = None, name: str = None, only_fixed: bool = False,
+             only_notfixed: bool = False, platform: str = None, scope: str = None, show_supressed: bool = False) -> Scan:
         """Scan a target for vulnerabilities using Grype.
 
         Args:
             target (str): The target to scan.
-            add_cpes_if_none (bool, optional): Whether to add Common Platform Enumerations (CPEs) if none are found. Defaults to False.
+            add_cpes_if_none (bool, optional): Whether to add CPEs if none are found. Defaults to False.
             by_cve (bool, optional): Whether to group vulnerabilities by CVE. Defaults to False.
             config (str, optional): The path to the Grype configuration file. Defaults to None.
             distro (str, optional): The target distribution. Defaults to None.

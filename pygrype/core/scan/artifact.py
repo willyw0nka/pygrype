@@ -4,6 +4,7 @@ from typing import List
 from pygrype.core.scan.location import Location
 from pygrype.core.scan.upstream import Upstream
 
+
 @dataclass
 class Artifact:
     id: str

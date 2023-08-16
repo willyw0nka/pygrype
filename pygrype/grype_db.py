@@ -4,6 +4,7 @@ from typing import List
 
 from pygrype.core.list.db_meta_data import DBMetaData
 
+
 class _GrypeDB:
     path: str
 

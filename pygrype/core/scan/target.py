@@ -3,6 +3,7 @@ from typing import List
 
 from pygrype.core.scan.layer import Layer
 
+
 @dataclass
 class Target:
     userInput: str

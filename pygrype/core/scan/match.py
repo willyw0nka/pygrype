@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import List
 
-from pygrype.core.scan.vulnerability import Vulnerability
-from pygrype.core.scan.match_details import MatchDetails
 from pygrype.core.scan.artifact import Artifact
+from pygrype.core.scan.match_details import MatchDetails
+from pygrype.core.scan.vulnerability import Vulnerability
+
 
 @dataclass
 class Match:
