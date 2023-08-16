@@ -15,7 +15,7 @@ Supported commands
     - [x] delete
     - [ ] diff
     - [ ] import
-    - [ ] list
+    - [x] list
     - [ ] status
     - [x] update
 - [ ] ~~help~~
@@ -35,31 +35,41 @@ pip install pygrype
 ## Usage
 Instantiate `Grype` using the default path
 ```python3
-from pygrype.grype import Grype
+from pygrype import Grype
 grype = Grype()
 ```
 or specify the binary
 ```python3
-from pygrype.grype import Grype
+from pygrype import Grype
 grype = Grype(path='/opt/grype')
 ```
 
 ## Full example
 ```python3
-from pygrype.grype import Grype
+from pygrype import Grype
 
-image = 'alpine:3.12'
-grype = Grype('/opt/grype')
+grype = Grype()
 
-version = grype.version()
-print('Using Grype version {version}'.format(version=version['version']))
+version_info = grype.version()
 
-print('Updating DB...')
-grype.db.update()
+print(f'Using grype {version_info.version}')
 
-scan = grype.scan(image)
-print('Image {image} has {matches} vlunerabilities'.format(
-    image=image,
-    matches=len(scan['matches'])))
+images = [
+    'alpine:3.12',
+    'ubuntu:18.04',
+    'debian:9'
+]
+
+for image in images:
+    scan = grype.scan(image)
+    criticals = len(list(filter(lambda x: x.vulnerability.severity.lower() == 'critical', scan.matches)))
+    print(f'{image} has {len(scan.matches)} vulnerabilities ({criticals} critical)')
+```
+Example output
+```
+Using grype 0.62.3
+alpine:3.12 has 23 vulnerabilities (3 critical)
+ubuntu:18.04 has 18 vulnerabilities (0 critical)
+debian:9 has 213 vulnerabilities (23 critical)
 ```
 
