@@ -2,8 +2,12 @@ import json
 import logging
 import shutil
 import subprocess
-from typing import Dict, List
+from typing import List
 
+from dacite import from_dict
+
+from pygrype.core.grype_version import GrypeVersion
+from pygrype.core.scan.scan import Scan
 from pygrype.grype_db import _GrypeDB
 
 
@@ -18,7 +22,7 @@ class Grype:
 
         Args:
             path (str, optional): The path to the Grype executable. Defaults to 'grype'.
-        
+
         Raises:
             Exception: If Grype is not found at the specified path.
         """
@@ -28,28 +32,40 @@ class Grype:
         self.path = path
         self.db = _GrypeDB(self.path)
 
-        version = self.version()['version']
-        logging.info(f'Using Grype {version}')
+        logging.info(f'Using Grype {self.version().version}')
 
-    def version(self) -> Dict:
+    def version(self) -> GrypeVersion:
         """Get the version of Grype.
 
         Returns:
             Dict: A dictionary containing the version information.
         """
-        c = subprocess.run(
+        process = subprocess.run(
             args=[self.path, 'version', '--output', 'json'],
-            capture_output=True)        
-        return json.loads(c.stdout)
+            capture_output=True)
+        data = json.loads(process.stdout)
+        grype_version = GrypeVersion(
+            version=data['version'],
+            syft_version=data['syftVersion'],
+            git_commit=data['gitCommit'],
+            git_description=data['gitDescription'],
+            build_date=data['buildDate'],
+            go_version=data['goVersion'],
+            compiler=data['compiler'],
+            platform=data['platform'],
+            application=data['application'],
+            supported_db_schema=data['supportedDbSchema'],
+        )
+        return grype_version
 
-    def scan(self, target: str, add_cpes_if_none: bool = False, by_cve: bool = False, config: str = None, distro: str = None, exclude: List[str] = None,
-             fail_on: str = None, file: str = None, name: str = None, only_fixed: bool = False, only_notfixed: bool = False, platform: str = None,
-             scope: str = None, show_supressed: bool = False) -> Dict:
+    def scan(self, target: str, add_cpes_if_none: bool = False, by_cve: bool = False, config: str = None, distro: str = None,
+             exclude: List[str] = None, fail_on: str = None, file: str = None, name: str = None, only_fixed: bool = False,
+             only_notfixed: bool = False, platform: str = None, scope: str = None, show_supressed: bool = False) -> Scan:
         """Scan a target for vulnerabilities using Grype.
 
         Args:
             target (str): The target to scan.
-            add_cpes_if_none (bool, optional): Whether to add Common Platform Enumerations (CPEs) if none are found. Defaults to False.
+            add_cpes_if_none (bool, optional): Whether to add CPEs if none are found. Defaults to False.
             by_cve (bool, optional): Whether to group vulnerabilities by CVE. Defaults to False.
             config (str, optional): The path to the Grype configuration file. Defaults to None.
             distro (str, optional): The target distribution. Defaults to None.
@@ -97,8 +113,12 @@ class Grype:
 
         logging.debug(f'Running: {args}')
 
-        c = subprocess.run(
+        process = subprocess.run(
             args=args,
             capture_output=True
         )
-        return json.loads(c.stdout)
+
+        data = json.loads(process.stdout)
+        scan = from_dict(data_class=Scan, data=data)
+
+        return scan
