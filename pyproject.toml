@@ -12,6 +12,9 @@ authors = [
     {name = "Albert Simon", email = "simon.albert75@gmail.com"}
 ]
 description = "Python wrapper for Grype"
+dependencies = [
+    "dacite>=1.8.1"
+]
 license = { text = "MIT License" }
 readme = "README.md"
 classifiers = [
