@@ -9,13 +9,14 @@ from dacite import from_dict
 from pygrype.core.grype_version import GrypeVersion
 from pygrype.core.scan.scan import Scan
 from pygrype.grype_db import _GrypeDB
-
+from pygrype.logging import get_logger
 
 class Grype:
     """A class representing the Grype vulnerability scanner."""
 
     path: str
     db: _GrypeDB
+    logger: logging.Logger = get_logger()
 
     def __init__(self, path: str = 'grype') -> None:
         """Initialize the Grype object.
@@ -27,12 +28,12 @@ class Grype:
             Exception: If Grype is not found at the specified path.
         """
         if not shutil.which(path):
-            logging.error(f'Grype was not found at: {path}')
+            self.logger.error(f'Grype was not found at: {path}')
             raise Exception(f'Grype was not found at: {path}')
         self.path = path
         self.db = _GrypeDB(self.path)
 
-        logging.info(f'Using Grype {self.version().version}')
+        self.logger.info(f'Using Grype {self.version().version}')
 
     def version(self) -> GrypeVersion:
         """Get the version of Grype.
@@ -111,7 +112,7 @@ class Grype:
         if show_supressed:
             args.append('--show-supressed')
 
-        logging.debug(f'Running: {args}')
+        self.logger.debug(f'Running: {args}')
 
         process = subprocess.run(
             args=args,
