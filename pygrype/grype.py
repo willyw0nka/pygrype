@@ -39,7 +39,7 @@ class Grype:
         """Get the version of Grype.
 
         Returns:
-            Dict: A dictionary containing the version information.
+            GrypeVersion: An object representing the Grype Executable version information.
         """
         process = subprocess.run(
             args=[self.path, 'version', '--output', 'json'],
@@ -81,7 +81,7 @@ class Grype:
             show_supressed (bool, optional): Whether to show suppressed vulnerabilities. Defaults to False.
 
         Returns:
-            Dict: A dictionary containing the scan results.
+            Scan: A Scan class instance representing the scan results.
         """
         args = [self.path, target, '--output', 'json']
 
