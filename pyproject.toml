@@ -32,6 +32,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 keywords = ["anchore", "grype", "security"]
 dynamic = ["version"]
