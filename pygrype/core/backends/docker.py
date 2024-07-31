@@ -45,5 +45,8 @@ class GrypeDockerBackend:
         return DOCKER_EXE
 
     def execute(self, *args) -> CompletedProcess:
-        docker_args = ['run', '--rm', self.docker_image] + list(args)
+        docker_args = ['run', '--rm', '-e', 'GRYPE_DB_CACHE_DIR=/var/tmp/', '-v',
+                       '/var/run/docker.sock:/var/run/docker.sock', '-v', '/var/tmp/grype_cache:/var/tmp/',
+                       self.docker_image] + list(args)
+
         return execute(self.executable_string, *docker_args)
