@@ -2,19 +2,20 @@ import json
 import subprocess
 from typing import List
 
+from pygrype.core.backends.base import GrypeBackendProtocol
 from pygrype.core.list.db_meta_data import DBMetaData
 
 
 class _GrypeDB:
     path: str
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, backend: GrypeBackendProtocol) -> None:
         """Initialize the _GrypeDB object.
 
         Args:
-            path (str): The path to the Grype executable.
+            backend (GrypeBackendProtocol): .
         """
-        self.path = path
+        self.backend = backend
 
     # def check(self) -> None:
     #     """Check the status of the Grype database."""
@@ -26,9 +27,7 @@ class _GrypeDB:
         Returns:
             Int: the return code of the command.
         """
-        process = subprocess.run(
-            args=[self.path, 'db', 'delete'],
-            capture_output=True)
+        process = self.backend.execute('db', 'delete')
         return process.returncode
 
     # def diff(self) -> None:
@@ -41,10 +40,7 @@ class _GrypeDB:
 
     def list(self) -> List[DBMetaData]:
         """List all available Grype databases."""
-        process = subprocess.run(
-            args=[self.path, 'db', 'list', '-o', 'json'],
-            capture_output=True
-        )
+        process = self.backend.execute('db', 'list', '-o', 'json')
         data = json.loads(process.stdout)
         databases = [
             DBMetaData(
@@ -65,7 +61,5 @@ class _GrypeDB:
         Returns:
             Int: the return code of the command.
         """
-        process = subprocess.run(
-            args=[self.path, 'db', 'update'],
-            capture_output=True)
+        process = self.backend.execute('db', 'update')
         return process.returncode

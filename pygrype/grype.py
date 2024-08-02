@@ -6,10 +6,13 @@ from typing import List
 
 from dacite import from_dict
 
+from pygrype.core.backends.base import GrypeBackendProtocol
+from pygrype.core.backends.binary import GrypeBinaryBackend
 from pygrype.core.grype_version import GrypeVersion
 from pygrype.core.scan.scan import Scan
 from pygrype.grype_db import _GrypeDB
 from pygrype.logging import get_logger
+
 
 class Grype:
     """A class representing the Grype vulnerability scanner."""
@@ -18,20 +21,23 @@ class Grype:
     db: _GrypeDB
     logger: logging.Logger = get_logger()
 
-    def __init__(self, path: str = 'grype') -> None:
-        """Initialize the Grype object.
+    def __init__(self, backend: GrypeBackendProtocol = None) -> None:
+        """Initialize the Grype object, using the specified backend. If not set, backend defaults to using a local
+        binary named "grype".
 
         Args:
-            path (str, optional): The path to the Grype executable. Defaults to 'grype'.
+            backend (GrypeBackendProtocol, optional): The backend to use. Defaults to None if not set.
 
         Raises:
             Exception: If Grype is not found at the specified path.
         """
-        if not shutil.which(path):
-            self.logger.error(f'Grype was not found at: {path}')
-            raise Exception(f'Grype was not found at: {path}')
-        self.path = path
-        self.db = _GrypeDB(self.path)
+        if backend is None:
+            backend = GrypeBinaryBackend()
+        self.backend: GrypeBackendProtocol = backend
+
+        self.backend.ensure_backend()
+
+        self.db = _GrypeDB(self.backend)
 
         self.logger.info(f'Using Grype {self.version().version}')
 
@@ -41,10 +47,7 @@ class Grype:
         Returns:
             GrypeVersion: An object representing the Grype Executable version information.
         """
-        process = subprocess.run(
-            args=[self.path, 'version', '--output', 'json'],
-            capture_output=True)
-        data = json.loads(process.stdout)
+        data = json.loads(self.backend.execute('version', '--output', 'json').stdout)
         grype_version = GrypeVersion(
             version=data['version'],
             syft_version=data['syftVersion'],
@@ -83,7 +86,7 @@ class Grype:
         Returns:
             Scan: A Scan class instance representing the scan results.
         """
-        args = [self.path, target, '--output', 'json']
+        args = [target, '--output', 'json']
 
         if add_cpes_if_none:
             args.append('--add-cpes-if-none')
@@ -114,10 +117,7 @@ class Grype:
 
         self.logger.debug(f'Running: {args}')
 
-        process = subprocess.run(
-            args=args,
-            capture_output=True
-        )
+        process = self.backend.execute(*args)
 
         data = json.loads(process.stdout)
         scan = from_dict(data_class=Scan, data=data)

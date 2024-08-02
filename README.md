@@ -24,7 +24,11 @@ Supported commands
 
 ## Getting started
 ### Prerequisites
-PyGrype relies on an existing grype binary. [Install grype following the official instructions](https://github.com/anchore/grype#installation).
+PyGrype relies on either an existing grype binary, or a local Docker install.
+
+[Install grype binary following the official instructions](https://github.com/anchore/grype#installation).
+
+[Install Docker following the official instructions](https://docs.docker.com/get-docker/)
 
 ### Installation
 install using `pip`
@@ -33,15 +37,30 @@ pip install pygrype
 ```
 
 ## Usage
-Instantiate `Grype` using the default path
+
+Pygrype is wrapper around the `grype` binary, and can be used in two ways: using a local binary, or using the official Docker container.
+
+### Using Local Binary
+Instantiate `Grype` without any arguments. This will use the default binary backend, and will look for the `grype` binary in the system path.
+
 ```python3
 from pygrype import Grype
 grype = Grype()
 ```
 or specify the binary
 ```python3
-from pygrype import Grype
-grype = Grype(path='/opt/grype')
+from pygrype import Grype, GrypeBinaryBackend
+binary_backend = GrypeBinaryBackend(path='/opt/grype')
+grype = Grype(backend=binary_backend)
+```
+
+### Using Docker
+Instantiate `Grype` with the `GrypeDockerBackend` backend. This will use the [official grype Docker container](https://hub.docker.com/r/anchore/grype) to run scans. The backend will use the latest version of the container by default, but you can specify a specific version using the optional `tag` argument.
+
+```python3
+from pygrype import Grype, GrypeDockerBackend
+docker_backend = GrypeDockerBackend(tag="v0.79.2")
+grype = Grype(backend=docker_backend)
 ```
 
 ## Full example
